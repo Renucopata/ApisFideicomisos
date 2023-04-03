@@ -36,3 +36,5 @@ C:\Users\robotltd\source\repos\ApisFideicomisos\ApisFideicomisos\obj\Debug\net6.
 C:\Users\robotltd\source\repos\ApisFideicomisos\ApisFideicomisos\obj\Debug\net6.0\ApisFideicomisos.pdb
 C:\Users\robotltd\source\repos\ApisFideicomisos\ApisFideicomisos\obj\Debug\net6.0\ApisFideicomisos.genruntimeconfig.cache
 C:\Users\robotltd\source\repos\ApisFideicomisos\ApisFideicomisos\obj\Debug\net6.0\ref\ApisFideicomisos.dll
+C:\Users\robotltd\source\repos\ApisFideicomisos\ApisFideicomisos\bin\Debug\net6.0\Json.Net.dll
+C:\Users\robotltd\source\repos\ApisFideicomisos\ApisFideicomisos\bin\Debug\net6.0\Newtonsoft.Json.dll
