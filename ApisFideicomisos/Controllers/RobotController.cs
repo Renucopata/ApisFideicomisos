@@ -11,6 +11,16 @@ namespace ApisFideicomisos.Controllers
     {
 
         [HttpGet] // Probada y funcionando
+        [Route("SPCargaPlanilla")]
+        public IActionResult cargaPlanilla([FromBody]List<REQUEST_EXCEL_FIDEICO> BDD, int flag, string saul)
+        {
+
+            Procedures pro = new Procedures();
+            ModelState.Clear();
+            return Ok(pro.cargaPlanilla());
+        }
+
+        [HttpGet] // Probada y funcionando
         [Route("SPInterfaz")]
         public IActionResult spInterfaz()
         {
@@ -118,6 +128,99 @@ namespace ApisFideicomisos.Controllers
             Procedures pro = new Procedures();
             ModelState.Clear();
             return Ok(pro.FechasT(data.filtro));
+        }
+
+        [HttpPost] // Probada y funcionando
+        [Route("SPFMPbyID")]
+        public IActionResult getFMPbiId([FromBody] REQUEST_ID data)
+        {
+
+            Procedures pro = new Procedures();
+            ModelState.Clear();
+            return Ok(pro.GetId(data.id));
+        }
+
+        [HttpPost] // Probada y funcionando
+        [Route("SPeliminadoFMP")]
+        public IActionResult eliminadoFMP([FromBody] REQUEST_ID data)
+        {
+
+            Procedures pro = new Procedures();
+            ModelState.Clear();
+            return Ok(pro.eliminarFMP(data.id));
+        }
+
+        //Fogacp
+
+
+        [HttpGet] // Probada y funcionando
+        [Route("SPgetFogacpTabla")]
+        public IActionResult getFullFogacp()
+        {
+
+            Procedures pro = new Procedures();
+            ModelState.Clear();
+            return Ok(pro.TablaFogacp());
+        }
+
+        [HttpPost] // Probada y funcionando
+        [Route("SPEditEstadofogacp")]
+        public IActionResult editablesEstadoFogacp([FromBody] REQUEST_ID_EDITABLES data)
+        {
+
+            Procedures pro = new Procedures();
+            ModelState.Clear();
+            return Ok(pro.editablesEstado(data.id, data.edit));
+        }
+
+        [HttpPost] // Probada y funcionando
+        [Route("SPEditnotafogacp")]
+        public IActionResult editablesNotaFogacp([FromBody] REQUEST_ID_EDITABLES data)
+        {
+
+            Procedures pro = new Procedures();
+            ModelState.Clear();
+            return Ok(pro.editablesNotas(data.id, data.edit));
+        }
+
+        [HttpPost] // Probada y funcionando
+        [Route("SPEditGarantiasfogacp")]
+        public IActionResult editGarantias([FromBody] REQUEST_ID_EDITABLES data)
+        {
+
+            Procedures pro = new Procedures();
+            ModelState.Clear();
+            return Ok(pro.editGarantias(data.id, data.edit));
+        }
+
+        [HttpPost] // Probada y funcionando
+        [Route("SPFiltroFogacp")]
+        public IActionResult editGarantias([FromBody] REQUEST_FILTRO data)
+        {
+
+            Procedures pro = new Procedures();
+            ModelState.Clear();
+            return Ok(pro.filtroFogacp(data.filtro));
+        }
+
+        [HttpPost] // Probada y funcionando
+        [Route("SPFechasFP")]
+        public IActionResult fechasFP([FromBody] REQUEST_FECHAS data)
+        {
+
+            Procedures pro = new Procedures();
+            ModelState.Clear();
+            return Ok(pro.fechasFP(data.fechaIni, data.fechaFin));
+        }
+
+        [HttpPost] // Probada y funcionando
+        [Route("SPDescargaFP")]
+        public IActionResult ReporteFP([FromBody] REQUEST_FECHAS data)
+        {
+
+            Procedures pro = new Procedures();
+            ModelState.Clear();
+            return Ok(pro.ReporteFP(data.fechaIni, data.fechaFin));
         }
 
     }

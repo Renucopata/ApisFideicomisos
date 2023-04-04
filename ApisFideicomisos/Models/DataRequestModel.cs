@@ -33,4 +33,31 @@
         public string filtro { get; set; }
   
     }
+
+    public class REQUEST_ID_EDITABLES
+    {
+        public int id { get; set; }
+        public string edit { get; set; }
+
+    }
+
+    public class REQUEST_EXCEL_FIDEICO
+    {
+        public string Empresa { get; set; }
+        public string NroLista { get; set; }
+        public string NombreProductor { get; set; }
+        public string NroCi { get; set; }
+        public string Cultivo { get; set; }
+        public string Variedad { get; set; }
+        public string VolumenSemilla { get; set; }
+        public string PrecioUnitario { get; set; }
+        public string SUB_TOTAL { get; set; }
+        public string RetencionImpuestos { get; set; }
+        public string TOTAL { get; set; }
+        public string DeduccionGastosOp { get; set; }
+        public string LiquidoPagable { get; set; }
+        public string Municipio { get; set; }
+        public string Comunidad { get; set; }
+
+    }
 }

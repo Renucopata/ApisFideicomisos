@@ -2,12 +2,15 @@
 using System.Data;
 using System.Data.SqlClient;
 using Newtonsoft.Json;
+using System.Text.Json.Nodes;
+using System.Reflection;
 
 namespace ApisFideicomisos.Handlers
 {
     public class Procedures
     {
 
+        //logica.cs file
         public List<FullTFideicomisosResponse> GetFullTFideicomisos()
         {
             var responseList = new List<FullTFideicomisosResponse>();
@@ -122,7 +125,7 @@ namespace ApisFideicomisos.Handlers
             return responseList;
         }
 
-        public bool CargaEditable(REQUEST_EDITABLES data) //Revisar
+        public bool CargaEditable(REQUEST_EDITABLES data) 
         {
             bool resp;
             DateTime nfc = default(DateTime);
@@ -320,6 +323,8 @@ namespace ApisFideicomisos.Handlers
             return resp;
         }
 
+        //Procedimientos Fimype file
+
         public List<FullTFimypeResponse> TablaFimype()
         {
             var ListaDatos = new List<FullTFimypeResponse>();
@@ -429,9 +434,9 @@ namespace ApisFideicomisos.Handlers
             return ListaFiltrada;
         }
 
-        public string Descarga(string fi, string ff)
+        public JsonArray Descarga(string fi, string ff)
         {
-            DataTable excel = new DataTable();
+            JsonArray jsonArray = new JsonArray();
             try
             {
                 var cn = new ConnectionADFideicomisos();
@@ -444,7 +449,17 @@ namespace ApisFideicomisos.Handlers
                         exp.SelectCommand.CommandType = CommandType.StoredProcedure;
                         exp.SelectCommand.Parameters.AddWithValue("@desde", fi);
                         exp.SelectCommand.Parameters.AddWithValue("@hasta", ff);
+                        DataTable excel = new DataTable();
                         exp.Fill(excel);
+                        foreach (DataRow row in excel.Rows)
+                        {
+                            JsonObject jsonObject = new JsonObject();
+                            foreach (DataColumn column in excel.Columns)
+                            {
+                                jsonObject.Add(column.ColumnName, row[column].ToString());
+                            }
+                            jsonArray.Add(jsonObject);
+                        }
                     }
                 }
             }
@@ -452,7 +467,7 @@ namespace ApisFideicomisos.Handlers
             {
                 string error = e.Message;
             }
-            return JsonConvert.SerializeObject(excel);
+            return jsonArray;
         }
 
         public List<FechasFimypeResponse> FechasT(string fmin)
@@ -506,9 +521,9 @@ namespace ApisFideicomisos.Handlers
             return ListaFiltrada;
         }
 
-        public FullTFimypeResponse GetId(int Posicion)
+        public TFimypeByIDResponse GetId(int Posicion)
         {
-            var BDD = new FullTFideicomisosResponse();
+            var response = new TFimypeByIDResponse();
             var cn = new ConnectionADFideicomisos();
             using (var conexion = new SqlConnection(cn.get_cadConexion()))
             {
@@ -520,41 +535,49 @@ namespace ApisFideicomisos.Handlers
                 {
                     while (dr.Read())
                     {
-                        BDD.IdTabla = Convert.ToInt32(dr["IdTabla"]);
-                        BDD.Regional = dr["Regional"].ToString();
-                        BDD.Agencia = dr["Agencia"].ToString();
-                        BDD.FechaProceso = Convert.ToDateTime(dr["FechaProceso"]);
-                        BDD.NroOperacion = Convert.ToInt32(dr["NroOperacion"]);
-                        BDD.DocIdentidad = Convert.ToInt32(dr["DocIdentidad"]);
-                        BDD.CodCliente = Convert.ToInt32(dr["CodCliente"]);
-                        BDD.NombreTitular = dr["NombreTitular"].ToString();
-                        BDD.Moneda = dr["Moneda"].ToString();
-                        BDD.Estado = dr["Estado"].ToString();
-                        BDD.MontDesembolsdoBS = Convert.ToDecimal(dr["MontDesembolsdoBS"]);
-                        BDD.MontDesembolsdoUSD = Convert.ToDecimal(dr["MontDesembolsdoUSD"]);
-                        BDD.SaldoBS = Convert.ToDecimal(dr["SaldoBS"]);
-                        BDD.SaldoUSD = Convert.ToDecimal(dr["SaldoUSD"]);
-                        BDD.PrevisionBS = Convert.ToDecimal(dr["PrevisionBS"]);
-                        BDD.PrevisionUSD = Convert.ToDecimal(dr["PrevisionUSD"]);
-                        BDD.PrevisCiclicaBS = Convert.ToDecimal(dr["PrevisCiclicaBS"]);
-                        BDD.PrevisCiclicaUSD = Convert.ToDecimal(dr["PrevisCiclicaUSD"]);
-                        BDD.ProdDevengadosBS = Convert.ToDecimal(dr["ProdDevengadosBS"]);
-                        BDD.ProdDevengadosUSD = Convert.ToDecimal(dr["ProdDevengadosUSD"]);
-                        BDD.Plazo = dr["Plazo"].ToString(); ;
-                        BDD.FechaVencimiento = Convert.ToDateTime(dr["FechaVencimiento"]);
-                        BDD.FechaProxPago = Convert.ToDateTime(dr["FechaProxPago"]);
+                        response.IdTabla = Convert.ToInt32(dr["IdTabla"]);
+                        response.Regional = dr["Regional"].ToString();
+                        response.Agencia = dr["Agencia"].ToString();
+                        response.FechaProceso = Convert.ToDateTime(dr["FechaProceso"]);
+                        response.NroOperacion = Convert.ToInt32(dr["NroOperacion"]);
+                        response.DocIdentidad = Convert.ToInt32(dr["DocIdentidad"]);
+                        response.CodCliente = Convert.ToInt32(dr["CodCliente"]);
+                        response.NombreTitular = dr["NombreTitular"].ToString();
+                        response.Moneda = dr["Moneda"].ToString();
+                        response.Estado = dr["Estado"].ToString();
+                        response.MontDesembolsdoBS = Convert.ToDecimal(dr["MontDesembolsdoBS"]);
+                        response.MontDesembolsdoUSD = Convert.ToDecimal(dr["MontDesembolsdoUSD"]);
+                        response.SaldoBS = Convert.ToDecimal(dr["SaldoBS"]);
+                        response.SaldoUSD = Convert.ToDecimal(dr["SaldoUSD"]);
+                        response.PrevisionBS = Convert.ToDecimal(dr["PrevisionBS"]);
+                        response.PrevisionUSD = Convert.ToDecimal(dr["PrevisionUSD"]);
+                        response.PrevisCiclicaBS = Convert.ToDecimal(dr["PrevisCiclicaBS"]);
+                        response.PrevisCiclicaUSD = Convert.ToDecimal(dr["PrevisCiclicaUSD"]);
+                        response.ProdDevengadosBS = Convert.ToDecimal(dr["ProdDevengadosBS"]);
+                        response.ProdDevengadosUSD = Convert.ToDecimal(dr["ProdDevengadosUSD"]);
+                        response.Plazo = dr["Plazo"].ToString(); ;
+                        response.FechaVencimiento = Convert.ToDateTime(dr["FechaVencimiento"]);
+                        response.FechaProxPago = Convert.ToDateTime(dr["FechaProxPago"]);
+                        response.MontPagadoCapital = dr["MontPagadoCapital"] != System.DBNull.Value ? Convert.ToDecimal(dr["MontPagadoCapital"]) : 0;
+                        response.MontPagadoIntereses = dr["MontPagadoIntereses"] != System.DBNull.Value ? Convert.ToDecimal(dr["MontPagadoIntereses"]) : 0;
+                        response.EstadoPago = Convert.ToString(dr["EstadoPago"]);
+                        response.FechaPago = Convert.ToDateTime(dr["FechaPago"]);
+                        response.NumeroCuota = dr["NumeroCuota"] != System.DBNull.Value ? Convert.ToInt32(dr["NumeroCuota"]) : 0;
+                        response.FechaCarga = Convert.ToDateTime(dr["fechaCargaXlsx"]);
+                        response.Usuario = Convert.ToString(dr["Usuario"]);
+                        response.HoraR = Convert.ToString(dr["HoraRegistro"]);
                     }
                 }
             }
-            return BDD;
+            return response;
         }
 
-        public bool Eliminado(int pos)
+        public bool eliminarFMP(int pos)
         {
             bool resp;
             try
             {
-                var cn = new Connection();
+                var cn = new ConnectionADFideicomisos();
                 using (var conexion = new SqlConnection(cn.get_cadConexion()))
                 {
                     conexion.Open();
@@ -570,6 +593,337 @@ namespace ApisFideicomisos.Handlers
             {
                 string error = e.Message;
                 resp = false;
+            }
+            return resp;
+        }
+
+
+        //Fogacp
+
+
+        public List<FullFogacpResponse> TablaFogacp()
+        {
+            var ListaDatos = new List<FullFogacpResponse>();
+            var cn = new ConnectionADFideicomisos();
+            using (var conexion = new SqlConnection(cn.get_cadConexion()))
+            {
+                conexion.Open();
+                SqlCommand cmd = new SqlCommand("LeeFogacp", conexion);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                using (var dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        ListaDatos.Add(new FullFogacpResponse()
+                        {
+                            IdTabla = Convert.ToInt32(dr["IdTabla"]),
+                            Sucursal = dr["Sucursal"].ToString(),
+                            Agencia = dr["Agencia"].ToString(),
+                            FechaSolicitud = Convert.ToDateTime(dr["FechaSolicitud"]),
+                            OfCredito = dr["OfCredito"].ToString(),
+                            Nombre = dr["Nombre"].ToString(),
+                            NumeroPrestamo = dr["NumeroPrestamo"] != System.DBNull.Value ? Convert.ToInt64(dr["NumeroPrestamo"]) : 0,
+                            IdSolicitud = dr["IdSolicitud"] != System.DBNull.Value ? Convert.ToInt64(dr["IdSolicitud"]) : 0,
+                            Monto = dr["Monto"] != System.DBNull.Value ? Convert.ToDecimal(dr["Monto"]) : 0,
+                            Plazo = dr["Plazo"] != System.DBNull.Value ? Convert.ToInt32(dr["Plazo"]) : 0,
+                            Cobertura = dr["Cobertura"] is DBNull ? 0 : double.Parse(Convert.ToString(dr["Cobertura"])),
+                            Garantias = dr["Garantias"].ToString(),
+                            MontoGarant = dr["MontoGarant"].ToString(),
+                            NA = dr["NA"].ToString(),
+                            FechaRegistro = Convert.ToDateTime(dr["FechaRegistro"]),
+                            Actividad = dr["Actividad"].ToString(),
+                            DestinoFondos = dr["DestinoFondos"].ToString(),
+                            CoberturaSolicitada = dr["CoberturaSolicitada"] != System.DBNull.Value ? Convert.ToDecimal(dr["CoberturaSolicitada"]) : 0,
+                            Nuevo = dr["Nuevo"].ToString(),
+                            MontoMinimo = dr["MontoMinimo"] != System.DBNull.Value ? Convert.ToDecimal(dr["MontoMinimo"]) : 0,
+                            AR = dr["AR"].ToString(),
+                            FechaDesembolso = Convert.ToDateTime(dr["FechaDesembolso"]),
+                            Estado = dr["Estado"].ToString(),
+                            Notas = dr["Notas"].ToString(),
+                            Mes = dr["Mes"] != System.DBNull.Value ? Convert.ToInt32(dr["Mes"]) : 0,
+                            MaximoGarantias = dr["MaximoGarantias"].ToString(),
+                            MontoDesembolsado = dr["MontoDesembolsado"] != System.DBNull.Value ? Convert.ToDecimal(dr["MontoDesembolsado"]) : 0,
+                            EstadoPrestamo = dr["EstadoPrestamo"].ToString()
+                        });
+                    }
+                }
+            }
+            return ListaDatos;
+        }
+
+
+        public bool editablesEstado(int pos, string est)
+        {
+            var cn = new ConnectionADFideicomisos();
+            bool resp;
+            try
+            {
+                using (var conexion = new SqlConnection(cn.get_cadConexion()))
+                {
+                    conexion.Open();
+                    SqlCommand cmd = new SqlCommand("EditaEstado", conexion);
+                    cmd.Parameters.AddWithValue("id", pos);
+                    cmd.Parameters.AddWithValue("estado", est);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.ExecuteNonQuery();
+                }
+                resp = true;
+            }
+            catch (Exception e)
+            {
+                string error = e.Message;
+                resp = false;
+            }
+            return resp;
+        }
+
+        public bool editablesNotas(int pos, string note)
+        {
+            var cn = new ConnectionADFideicomisos();
+            bool resp;
+            try
+            {
+                using (var conexion = new SqlConnection(cn.get_cadConexion()))
+                {
+                    conexion.Open();
+                    SqlCommand cmd = new SqlCommand("EditaNotas", conexion);
+                    cmd.Parameters.AddWithValue("id", pos);
+                    cmd.Parameters.AddWithValue("notas", note);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.ExecuteNonQuery();
+                }
+                resp = true;
+            }
+            catch (Exception e)
+            {
+                string error = e.Message;
+                resp = false;
+            }
+            return resp;
+        }
+
+        public bool editGarantias(int pos, string sn)
+        {
+            var cn = new ConnectionADFideicomisos();
+            bool resp;
+            try
+            {
+                using (var conexion = new SqlConnection(cn.get_cadConexion()))
+                {
+                    conexion.Open();
+                    SqlCommand cmd = new SqlCommand("EditaGarantias", conexion);
+                    cmd.Parameters.AddWithValue("id", pos);
+                    cmd.Parameters.AddWithValue("garantias", sn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.ExecuteNonQuery();
+                }
+                resp = true;
+            }
+            catch (Exception e)
+            {
+                string error = e.Message;
+                resp = false;
+            }
+            return resp;
+        }
+
+        public List<FullFogacpResponse> filtroFogacp(string fl)
+        {
+            var ListaFiltrada = new List<FullFogacpResponse>();
+            var cn = new ConnectionADFideicomisos();
+            using (var conexion = new SqlConnection(cn.get_cadConexion()))
+            {
+                conexion.Open();
+                SqlCommand cmd = new SqlCommand("FiltroFP", conexion);
+                if (Int64.TryParse(fl, out long num))
+                    num = Int64.Parse(fl);
+                else
+                    num = 0;
+                cmd.Parameters.AddWithValue("sucursal", fl);
+                cmd.Parameters.AddWithValue("agencia", fl);
+                cmd.Parameters.AddWithValue("nombre", fl);
+                cmd.Parameters.AddWithValue("id", num);
+                cmd.Parameters.AddWithValue("estado", fl);
+                cmd.CommandType = CommandType.StoredProcedure;
+                using (var dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        ListaFiltrada.Add(new FullFogacpResponse()
+                        {
+                            IdTabla = Convert.ToInt32(dr["IdTabla"]),
+                            Sucursal = dr["Sucursal"].ToString(),
+                            Agencia = dr["Agencia"].ToString(),
+                            FechaSolicitud = Convert.ToDateTime(dr["FechaSolicitud"]),
+                            OfCredito = dr["OfCredito"].ToString(),
+                            Nombre = dr["Nombre"].ToString(),
+                            NumeroPrestamo = dr["NumeroPrestamo"] != System.DBNull.Value ? Convert.ToInt64(dr["NumeroPrestamo"]) : 0,
+                            IdSolicitud = dr["IdSolicitud"] != System.DBNull.Value ? Convert.ToInt64(dr["IdSolicitud"]) : 0,
+                            Monto = dr["Monto"] != System.DBNull.Value ? Convert.ToDecimal(dr["Monto"]) : 0,
+                            Plazo = dr["Plazo"] != System.DBNull.Value ? Convert.ToInt32(dr["Plazo"]) : 0,
+                            Cobertura = dr["Cobertura"] is DBNull ? 0 : double.Parse(Convert.ToString(dr["Cobertura"])),
+                            Garantias = dr["Garantias"].ToString(),
+                            MontoGarant = dr["MontoGarant"].ToString(),
+                            NA = dr["NA"].ToString(),
+                            FechaRegistro = Convert.ToDateTime(dr["FechaRegistro"]),
+                            Actividad = dr["Actividad"].ToString(),
+                            DestinoFondos = dr["DestinoFondos"].ToString(),
+                            CoberturaSolicitada = dr["CoberturaSolicitada"] != System.DBNull.Value ? Convert.ToDecimal(dr["CoberturaSolicitada"]) : 0,
+                            Nuevo = dr["Nuevo"].ToString(),
+                            MontoMinimo = dr["MontoMinimo"] != System.DBNull.Value ? Convert.ToDecimal(dr["MontoMinimo"]) : 0,
+                            AR = dr["AR"].ToString(),
+                            FechaDesembolso = Convert.ToDateTime(dr["FechaDesembolso"]),
+                            Estado = dr["Estado"].ToString(),
+                            Notas = dr["Notas"].ToString(),
+                            Mes = dr["Mes"] != System.DBNull.Value ? Convert.ToInt32(dr["Mes"]) : 0,
+                            MaximoGarantias = dr["MaximoGarantias"].ToString(),
+                            MontoDesembolsado = dr["MontoDesembolsado"] != System.DBNull.Value ? Convert.ToDecimal(dr["MontoDesembolsado"]) : 0,
+                            EstadoPrestamo = dr["EstadoPrestamo"].ToString()
+                        });
+
+                    }
+                }
+            }
+            return ListaFiltrada;
+        }
+
+        public List<FullFogacpResponse> fechasFP(string fmin, string fmax)
+        {
+            var ListaFiltrada = new List<FullFogacpResponse>();
+            var cn = new ConnectionADFideicomisos();
+            using (var conexion = new SqlConnection(cn.get_cadConexion()))
+            {
+                conexion.Open();
+                SqlCommand cmd = new SqlCommand("FechasFogacp", conexion);
+                cmd.Parameters.AddWithValue("@desde", fmin);
+                cmd.Parameters.AddWithValue("@hasta", fmax);
+                cmd.CommandType = CommandType.StoredProcedure;
+                using (var dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        ListaFiltrada.Add(new FullFogacpResponse()
+                        {
+                            IdTabla = Convert.ToInt32(dr["IdTabla"]),
+                            Sucursal = dr["Sucursal"].ToString(),
+                            Agencia = dr["Agencia"].ToString(),
+                            FechaSolicitud = Convert.ToDateTime(dr["FechaSolicitud"]),
+                            OfCredito = dr["OfCredito"].ToString(),
+                            Nombre = dr["Nombre"].ToString(),
+                            NumeroPrestamo = dr["NumeroPrestamo"] != System.DBNull.Value ? Convert.ToInt64(dr["NumeroPrestamo"]) : 0,
+                            IdSolicitud = dr["IdSolicitud"] != System.DBNull.Value ? Convert.ToInt64(dr["IdSolicitud"]) : 0,
+                            Monto = dr["Monto"] != System.DBNull.Value ? Convert.ToDecimal(dr["Monto"]) : 0,
+                            Plazo = dr["Plazo"] != System.DBNull.Value ? Convert.ToInt32(dr["Plazo"]) : 0,
+                            Cobertura = dr["Cobertura"] is DBNull ? 0 : double.Parse(Convert.ToString(dr["Cobertura"])),
+                            Garantias = dr["Garantias"].ToString(),
+                            MontoGarant = dr["MontoGarant"].ToString(),
+                            NA = dr["NA"].ToString(),
+                            FechaRegistro = Convert.ToDateTime(dr["FechaRegistro"]),
+                            Actividad = dr["Actividad"].ToString(),
+                            DestinoFondos = dr["DestinoFondos"].ToString(),
+                            CoberturaSolicitada = dr["CoberturaSolicitada"] != System.DBNull.Value ? Convert.ToDecimal(dr["CoberturaSolicitada"]) : 0,
+                            Nuevo = dr["Nuevo"].ToString(),
+                            MontoMinimo = dr["MontoMinimo"] != System.DBNull.Value ? Convert.ToDecimal(dr["MontoMinimo"]) : 0,
+                            AR = dr["AR"].ToString(),
+                            FechaDesembolso = Convert.ToDateTime(dr["FechaDesembolso"]),
+                            Estado = dr["Estado"].ToString(),
+                            Notas = dr["Notas"].ToString(),
+                            Mes = dr["Mes"] != System.DBNull.Value ? Convert.ToInt32(dr["Mes"]) : 0,
+                            MaximoGarantias = dr["MaximoGarantias"].ToString(),
+                            MontoDesembolsado = dr["MontoDesembolsado"] != System.DBNull.Value ? Convert.ToDecimal(dr["MontoDesembolsado"]) : 0,
+                            EstadoPrestamo = dr["EstadoPrestamo"].ToString()
+                        });
+                    }
+                }
+            }
+            return ListaFiltrada;
+        }
+
+        public JsonArray ReporteFP(string fi, string ff)
+        {
+            JsonArray jsonArray = new JsonArray();
+            try
+            {
+                var cn = new ConnectionADFideicomisos();
+                using (var conexion = new SqlConnection(cn.get_cadConexion()))
+                {
+                    conexion.Open();
+                    using (var exp = new SqlDataAdapter())
+                    {
+                        exp.SelectCommand = new SqlCommand("DescargaFP", conexion);
+                        exp.SelectCommand.CommandType = CommandType.StoredProcedure;
+                        exp.SelectCommand.Parameters.AddWithValue("@desde", fi);
+                        exp.SelectCommand.Parameters.AddWithValue("@hasta", ff);
+                        DataTable excel = new DataTable();
+                        exp.Fill(excel);
+                        foreach (DataRow row in excel.Rows)
+                        {
+                            JsonObject jsonObject = new JsonObject();
+                            foreach (DataColumn column in excel.Columns)
+                            {
+                                jsonObject.Add(column.ColumnName, row[column].ToString());
+                            }
+                            jsonArray.Add(jsonObject);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                string error = e.Message;
+            }
+            return jsonArray;
+        }
+
+        public int cargaPlanilla(List<REQUEST_EXCEL_FIDEICO> BDD, string Saul)
+        {
+            var aux = new DataTable();
+            Type items = BDD.First().GetType();
+            if (items.GetProperties().Any())
+            {
+                foreach (PropertyInfo prop in items.GetProperties())
+                {
+                    var columna = new DataColumn(prop.Name);
+                    var propType = Nullable.GetUnderlyingType(prop.PropertyType)
+                      ?? prop.PropertyType;
+                    columna.DataType = propType;
+                    aux.Columns.Add(columna);
+                }
+                int j;
+                foreach (var item in BDD)
+                {
+                    j = 0;
+                    object[] Fila = new object[aux.Columns.Count];
+                    foreach (PropertyInfo prop in items.GetProperties())
+                    {
+                        Fila[j] = prop.GetValue(item, null);
+                        j++;
+                    }
+                    aux.Rows.Add(Fila);
+                }
+            }
+            int resp;
+            try
+            {
+                var cn = new ConnectionADFideicomisos();
+                using (var conexion = new SqlConnection(cn.get_cadConexion()))
+                {
+                    conexion.Open();
+                    SqlCommand cmd = new SqlCommand("CargaTex", conexion);
+                    cmd.Parameters.Add("TEx", SqlDbType.Structured).Value = aux;
+                    cmd.Parameters.Add("flag", SqlDbType.Int).Direction = ParameterDirection.Output;
+                    cmd.Parameters.AddWithValue("saul", Saul);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.ExecuteNonQuery();
+                    resp = Convert.ToInt32(cmd.Parameters["flag"].Value);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                string mensaje = ex.Message.ToString();
+                resp = 0;
             }
             return resp;
         }
