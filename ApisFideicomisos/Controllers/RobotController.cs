@@ -22,7 +22,7 @@ namespace ApisFideicomisos.Controllers
 
         [HttpGet] // Probada y funcionando
         [Route("SPCargaPlanillaFMP")]
-        public IActionResult cargaPlanillaFMP([FromBody] List<REQUEST_EXCEL_FIDEICO> BDD, string saul)
+        public IActionResult cargaPlanillaFMP([FromBody] List<REQUEST_EXCEL_FMP> BDD, string saul)
         {
 
             Procedures pro = new Procedures();
