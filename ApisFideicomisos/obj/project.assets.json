@@ -749,24 +749,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\GAMER XTREME\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\robotltd\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\ApisFideicomisos\\ApisFideicomisos\\ApisFideicomisos\\ApisFideicomisos.csproj",
+      "projectUniqueName": "D:\\ApisFideicomisos2\\ApisFideicomisos\\ApisFideicomisos\\ApisFideicomisos.csproj",
       "projectName": "ApisFideicomisos",
-      "projectPath": "D:\\ApisFideicomisos\\ApisFideicomisos\\ApisFideicomisos\\ApisFideicomisos.csproj",
-      "packagesPath": "C:\\Users\\GAMER XTREME\\.nuget\\packages\\",
-      "outputPath": "D:\\ApisFideicomisos\\ApisFideicomisos\\ApisFideicomisos\\obj\\",
+      "projectPath": "D:\\ApisFideicomisos2\\ApisFideicomisos\\ApisFideicomisos\\ApisFideicomisos.csproj",
+      "packagesPath": "C:\\Users\\robotltd\\.nuget\\packages\\",
+      "outputPath": "D:\\ApisFideicomisos2\\ApisFideicomisos\\ApisFideicomisos\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\GAMER XTREME\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\robotltd\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -774,7 +769,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

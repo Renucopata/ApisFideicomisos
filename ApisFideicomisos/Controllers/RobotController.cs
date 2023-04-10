@@ -12,12 +12,22 @@ namespace ApisFideicomisos.Controllers
 
         [HttpGet] // Probada y funcionando
         [Route("SPCargaPlanilla")]
-        public IActionResult cargaPlanilla([FromBody]List<REQUEST_EXCEL_FIDEICO> BDD, int flag, string saul)
+        public IActionResult cargaPlanilla([FromBody]List<REQUEST_EXCEL_FIDEICO> BDD, string saul)
         {
 
             Procedures pro = new Procedures();
             ModelState.Clear();
-            return Ok(pro.cargaPlanilla());
+            return Ok(pro.cargaPlanilla(BDD, saul));
+        }
+
+        [HttpGet] // Probada y funcionando
+        [Route("SPCargaPlanillaFMP")]
+        public IActionResult cargaPlanillaFMP([FromBody] List<REQUEST_EXCEL_FIDEICO> BDD, string saul)
+        {
+
+            Procedures pro = new Procedures();
+            ModelState.Clear();
+            return Ok(pro.cargaPlanillaFMP(BDD, saul));
         }
 
         [HttpGet] // Probada y funcionando

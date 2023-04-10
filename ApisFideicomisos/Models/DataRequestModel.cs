@@ -60,4 +60,31 @@
         public string Comunidad { get; set; }
 
     }
+
+    public class REQUEST_EXCEL_FMP
+    {
+        public string Regional { get; set; }
+        public string Agencia { get; set; }
+        public string FechaProceso { get; set; }
+        public string NoOperacion { get; set; }
+        public string DocumentoIdentidad { get; set; }
+        public string CodigoCliente { get; set; }
+        public string NombreTitular { get; set; }
+        public string Moneda { get; set; }
+        public string Estado { get; set; }
+        public string MontoDesembolsadoBs { get; set; }
+        public string MontoDesembolsadoUsd { get; set; }
+        public string SaldoBs { get; set; }
+        public string SaldoUsd { get; set; }
+        public string PrevisonBs { get; set; }
+        public string PrevisonUsd { get; set; }
+        public string PrevisonCiclicaBs { get; set; }
+        public string PrevisonCiclicaUsd { get; set; }
+        public string ProductosDevengadosBs { get; set; }
+        public string ProductosDevengadosUsd { get; set; }
+        public string Plazo { get; set; }
+        public string FechaVencimiento { get; set; }
+        public string FechaProxPago { get; set; }
+
+    }
 }

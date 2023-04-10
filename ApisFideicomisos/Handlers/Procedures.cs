@@ -879,30 +879,12 @@ namespace ApisFideicomisos.Handlers
         public int cargaPlanilla(List<REQUEST_EXCEL_FIDEICO> BDD, string Saul)
         {
             var aux = new DataTable();
-            Type items = BDD.First().GetType();
-            if (items.GetProperties().Any())
+          
+            foreach (var excelRow in BDD)
             {
-                foreach (PropertyInfo prop in items.GetProperties())
-                {
-                    var columna = new DataColumn(prop.Name);
-                    var propType = Nullable.GetUnderlyingType(prop.PropertyType)
-                      ?? prop.PropertyType;
-                    columna.DataType = propType;
-                    aux.Columns.Add(columna);
-                }
-                int j;
-                foreach (var item in BDD)
-                {
-                    j = 0;
-                    object[] Fila = new object[aux.Columns.Count];
-                    foreach (PropertyInfo prop in items.GetProperties())
-                    {
-                        Fila[j] = prop.GetValue(item, null);
-                        j++;
-                    }
-                    aux.Rows.Add(Fila);
-                }
+                aux.Rows.Add(excelRow);
             }
+
             int resp;
             try
             {
@@ -928,307 +910,38 @@ namespace ApisFideicomisos.Handlers
             return resp;
         }
 
-
-        public DnacResponse ecoTransResponse()
+        public int cargaPlanillaFMP(List<REQUEST_EXCEL_FMP> BDD, string Saul)
         {
-            var response = new DnacResponse();
-            setPeticion(response);
-            setCredito(response);
-            setTicket(response);
-            setCiAndComple(response, response.Ticket);
+            var aux = new DataTable();
 
-
-
-
-
-
-
-            return response;
-        }
-
-        public void setPeticion(DnacResponse response)
-        {
-           
-            string query = "SELECT[]from[]WHERE[]=''";
-            var cn = new ConnectionADFideicomisos();
-            using (var conexion = new SqlConnection(cn.get_cadConexion()))
+            foreach (var excelRow in BDD)
             {
-                conexion.Open();
-                SqlCommand cmd = new SqlCommand(query, conexion);
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        response.Peticion = Convert.ToInt64(reader["ESTADO"]);
-
-                    }
-                }
-
-            }
-            
-        }
-
-        public void setCredito(DnacResponse response)
-        {
-
-            string query = "SELECT[]from[]WHERE[]=''";
-            var cn = new ConnectionADFideicomisos();
-            using (var conexion = new SqlConnection(cn.get_cadConexion()))
-            {
-                conexion.Open();
-                SqlCommand cmd = new SqlCommand(query, conexion);
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        response.Credito = Convert.ToInt64(reader["nroCredito"]);//Verificar
-
-                    }
-                }
-
-            }
-        }
-
-        public void setTicket(DnacResponse response)
-        {
-
-            string query = "SELECT[]from[]WHERE[]=''";
-            var cn = new ConnectionADFideicomisos();
-            using (var conexion = new SqlConnection(cn.get_cadConexion()))
-            {
-                conexion.Open();
-                SqlCommand cmd = new SqlCommand(query, conexion);
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        response.Ticket = Convert.ToInt64(reader["TICKET"]);//Verificar
-
-                    }
-                }
-
-            }
-            
-        }
-
-        public void setCiAndComple(DnacResponse response, Int64 ticket)
-        {
-
-            string query = "SELECT[ci],[Complemento] from[]WHERE[]='"+ticket+"'";
-            var cn = new ConnectionADFideicomisos();
-            using (var conexion = new SqlConnection(cn.get_cadConexion()))
-            {
-                conexion.Open();
-                SqlCommand cmd = new SqlCommand(query, conexion);
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        response.Ci = reader["TICKET"].ToString();//Verificar
-                        response.Complemento = reader["TICKET"].ToString();//Verificar
-
-                    }
-                }
-
+                aux.Rows.Add(excelRow);
             }
 
-        }
-
-        public void setCijpg(DnacResponse response, Int64 ticket)
-        {
-
-            string query = "SELECT[ci],[Complemento] from[]WHERE[]='" + ticket + "'";
-            var cn = new ConnectionADFideicomisos();
-            using (var conexion = new SqlConnection(cn.get_cadConexion()))
+            int resp;
+            try
             {
-                conexion.Open();
-                SqlCommand cmd = new SqlCommand(query, conexion);
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                var cn = new ConnectionADFideicomisos();
+                using (var conexion = new SqlConnection(cn.get_cadConexion()))
                 {
-                    while (reader.Read())
-                    {
-                        response.Ci = reader["TICKET"].ToString();//Verificar
-                        response.Complemento = reader["TICKET"].ToString();//Verificar
+                    conexion.Open();
+                    SqlCommand cmd = new SqlCommand("CargaTexFMP", conexion);
+                    cmd.Parameters.Add("TEx", SqlDbType.Structured).Value = aux;
+                    cmd.Parameters.Add("flag", SqlDbType.Int).Direction = ParameterDirection.Output;
+                    cmd.Parameters.AddWithValue("saul", Saul);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.ExecuteNonQuery();
+                    resp = Convert.ToInt32(cmd.Parameters["flag"].Value);
 
-                    }
-                }
-
-            }
-
-        }
-
-        public void setSci_Bid(DnacResponse response, Int64 ticket)
-        {
-
-            string query = "SELECT[ci],[Complemento] from[]WHERE[]='" + ticket + "'";
-            var cn = new ConnectionADFideicomisos();
-            using (var conexion = new SqlConnection(cn.get_cadConexion()))
-            {
-                conexion.Open();
-                SqlCommand cmd = new SqlCommand(query, conexion);
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        response.Ci = reader["TICKET"].ToString();//Verificar
-                        response.Complemento = reader["TICKET"].ToString();//Verificar
-
-                    }
-                }
-
-            }
-
-        }
-
-        public void setBD_Fecha_AM(DnacResponse response, Int64 ticket)
-        {
-
-            string query = "SELECT[ci],[Complemento] from[]WHERE[]='" + ticket + "'";
-            var cn = new ConnectionADFideicomisos();
-            using (var conexion = new SqlConnection(cn.get_cadConexion()))
-            {
-                conexion.Open();
-                SqlCommand cmd = new SqlCommand(query, conexion);
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        response.Ci = reader["TICKET"].ToString();//Verificar
-                        response.Complemento = reader["TICKET"].ToString();//Verificar
-
-                    }
-                }
-
-            }
-
-        }
-
-        public void setGeo(DnacResponse response, Int64 ticket)
-        {
-            var geo = new GeoLocation();
-            string query = "SELECT[ci],[Complemento] from[]WHERE[]='" + ticket + "'";
-            var cn = new ConnectionADFideicomisos();
-            using (var conexion = new SqlConnection(cn.get_cadConexion()))
-            {
-                conexion.Open();
-                SqlCommand cmd = new SqlCommand(query, conexion);
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        
-                        geo.Nombre = reader["Nombre"].ToString();//Verificar
-                        geo.Ci = reader["Nombre"].ToString();//Verificar
-                        geo.Fecha = reader["Nombre"].ToString();//Verificar
-
-                        response.GeoLocations = geo;
-
-                    }
-                    
-                }
-
-            }
-
-        }
-
-        public void setSEGIP_B64(DnacResponse response, Int64 ticket)
-        {
-
-            string query = "SELECT[ci],[Complemento] from[]WHERE[]='" + ticket + "'";
-            var cn = new ConnectionADFideicomisos();
-            using (var conexion = new SqlConnection(cn.get_cadConexion()))
-            {
-                conexion.Open();
-                SqlCommand cmd = new SqlCommand(query, conexion);
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        
-                        response.SegipB64 = reader["TICKET"].ToString();//Verificar
-
-                    }
-                }
-
-            }
-
-        }
-
-        public string GetBase64File(string fileName, string filePath)
-        {
-            string base64String = "";
-            string connectionString = "your_connection_string_here";
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-
-                string sqlQuery = "SELECT file_data FROM your_table_name WHERE file_name = @FileName AND file_path = @FilePath";
-
-                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
-                {
-                    command.Parameters.AddWithValue("@FileName", fileName);
-                    command.Parameters.AddWithValue("@FilePath", filePath);
-
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        if (reader.HasRows)
-                        {
-                            reader.Read();
-                            byte[] fileData = (byte[])reader["file_data"];
-                            base64String = Convert.ToBase64String(fileData);
-                        }
-                    }
                 }
             }
-
-            return base64String;
-        }
-
-
-        /* cmd.Parameters.AddWithValue("@desde", fmin);
-        //cmd.CommandType = CommandType.StoredProcedure;
-    using (var dr = cmd.ExecuteReader())
-    {
-        while (dr.Read())
-        {
-            ListaFiltrada.Add(new FullTFideicomisosResponse()
+            catch (Exception ex)
             {
-                IdTabla = Convert.ToInt32(dr["IdTabla"]),
-                Empresa = dr["Empresa"].ToString(),
-                Nlista = Convert.ToInt32(dr["Nlista"]),
-                Productor = dr["Productor"].ToString(),
-                CI = dr["CI"].ToString(),
-                Cultivo = dr["Cultivo"].ToString(),
-                Variedad = dr["Variedad"].ToString(),
-                VSemilla = Convert.ToSingle(dr["VSemilla"]),
-                Precio = Convert.ToDecimal(dr["Precio"]),
-                STotal = Convert.ToDecimal(dr["STotal"]),
-                RImpuestos5 = Convert.ToSingle(dr["RImpuestos5"]),
-                RImpuestos3 = Convert.ToSingle(dr["RImpuestos3"]),
-                Total = Convert.ToDecimal(dr["Total"]),
-                DgastosOperativos = Convert.ToDecimal(dr["DgastosOperativos"]),
-                LPagable = Convert.ToDecimal(dr["LPagable"]),
-                Municipio = dr["Municipio"].ToString(),
-                Comunidad = dr["Comunidad"].ToString(),
-                NFuncionario = dr["NFuncionario"].ToString(),
-                Sucursal = dr["Sucursal"].ToString(),
-                Agencia = dr["Agencia"].ToString(),
-                EPago = dr["EPago"].ToString(),
-                FPago = Convert.ToDateTime(dr["FPago"]),
-                Dias = dr["Dias"] != System.DBNull.Value ? Convert.ToInt32(dr["Dias"]) : 0,
-                FCobro = Convert.ToDateTime(dr["FCobro"]),
-                ECobro = dr["ECobro"].ToString(),
-                Documentacion = dr["Documentacion"].ToString(),
-                Usuario = dr["Usuario"].ToString(),
-                FechaRegistro = Convert.ToDateTime(dr["FechaRegistro"]),
-                HoraRegistro = dr["HoraRegistro"]?.ToString()
-            });
-
+                string mensaje = ex.Message.ToString();
+                resp = 0;
+            }
+            return resp;
         }
-    }
-}
-return response;
-}*/
     }
 }
